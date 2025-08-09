@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问卷调查系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .question-group {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .question-group:hover {
+            border-color: #4facfe;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.1);
+        }
+
+        .question-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-number {
+            background: #4facfe;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-item,
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-item:hover,
+        .checkbox-item:hover {
+            background-color: #f8f9ff;
+            border-color: #4facfe;
+        }
+
+        .radio-item input,
+        .checkbox-item input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .rating-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .rating-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rating-item:hover {
+            background-color: #f0f8ff;
+        }
+
+        .rating-item input {
+            margin-bottom: 5px;
+            transform: scale(1.3);
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #4facfe;
+        }
+
+        .success-message h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .rating-group {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 用户体验调查问卷</h1>
+            <p>您的意见对我们非常重要，请花几分钟时间完成这份问卷</p>
+        </div>
+
+        <div class="form-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <form id="surveyForm">
+                <!-- 基本信息 -->
+                <div class="question-group">
+                    <div class="question-title">
+                        <span class="question-number">1</span>
+                        基本信息
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">邮箱 *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">联系电话</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                </div>
+
+                <!-- 年龄段选择 -->
+                <div class="question-group">
+                    <div class="question-title">
+                        <span class="question-number">2</span>
+                        您的年龄段是？*
+                    </div>
+                    
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="age1" name="age" value="18-25" required>
+                            <label for="age1">18-25岁</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="age2" name="age" value="26-35" required>
+                            <label for="age2">26-35岁</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="age3" name="age" value="36-45" required>
+                            <label for="age3">36-45岁</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="age4" name="age" value="46-55" required>
+                            <label for="age4">46-55岁</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="age5" name="age" value="55+" required>
+                            <label for="age5">55岁以上</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 职业选择 -->
+                <div class="question-group">
+                    <div class="question-title">
+                        <span class="question-number">3</span>
+                        您的职业是？*
+                    </div>
+                    
+                    <div class="form-group">
+                        <select name="occupation" required>
+                            <option value="">请选择您的职业</option>
+                            <option value="student">学生</option>
+                            <option value="teacher">教师</option>
+                            <option value="engineer">工程师</option>
+                            <option value="doctor">医生</option>
+                            <option value="business">商务人员</option>
+                            <option value="designer">设计师</option>
+                            <option value="freelancer">自由职业者</option>
+                            <option value="retired">退休</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 多选题 -->
+                <div class="question-group">
+                    <div class="question-title">
+                        <span class="question-number">4</span>
+                        您通常使用哪些社交媒体？（可多选）
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="wechat" name="social_media" value="wechat">
+                            <label for="wechat">微信</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="weibo" name="social_media" value="weibo">
+                            <label for="weibo">微博</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="douyin" name="social_media" value="douyin">
+                            <label for="douyin">抖音</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="xiaohongshu" name="social_media" value="xiaohongshu">
+                            <label for="xiaohongshu">小红书</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bilibili" name="social_media" value="bilibili">
+                            <label for="bilibili">哔哩哔哩</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 满意度评分 -->
+                <div class="question-group">
+                    <div class="question-title">
+                        <span class="question-number">5</span>
+                        您对我们服务的整体满意度？*
+                    </div>
+                    
+                    <div class="rating-group">
+                        <div class="rating-item">
+                            <input type="radio" id="rating1" name="satisfaction" value="1" required>
+                            <label for="rating1">1<br>很不满意</label>
+                        </div>
+                        <div class="rating-item">
+                            <input type="radio" id="rating2" name="satisfaction" value="2" required>
+                            <label for="rating2">2<br>不满意</label>
+                        </div>
+                        <div class="rating-item">
+                            <input type="radio" id="rating3" name="satisfaction" value="3" required>
+                            <label for="rating3">3<br>一般</label>
+                        </div>
+                        <div class="rating-item">
+                            <input type="radio" id="rating4" name="satisfaction" value="4" required>
+                            <label for="rating4">4<br>满意</label>
+                        </div>
+                        <div class="rating-item">
+                            <input type="radio" id="rating5" name="satisfaction" value="5" required>
+                            <label for="rating5">5<br>非常满意</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 开放性问题 -->
+                <div class="question-group">
+                    <div class="question-title">
+                        <span class="question-number">6</span>
+                        您有什么建议或意见吗？
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea name="suggestions" placeholder="请在这里分享您的想法和建议..."></textarea>
+                    </div>
+                </div>
+
+                <div class="submit-container">
+                    <button type="submit" class="submit-btn">🚀 提交问卷</button>
+                </div>
+            </form>
+
+            <div class="success-message" id="successMessage">
+                <h2>🎉 提交成功！</h2>
+                <p>感谢您参与我们的调查，您的意见对我们非常宝贵！</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 进度条更新
+        function updateProgress() {
+            const form = document.getElementById('surveyForm');
+            const requiredFields = form.querySelectorAll('[required]');
+            let filledFields = 0;
+            
+            requiredFields.forEach(field => {
+                if (field.type === 'radio') {
+                    const radioGroup = form.querySelectorAll(`[name="${field.name}"]`);
+                    const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                    if (isChecked) filledFields++;
+                } else if (field.value.trim() !== '') {
+                    filledFields++;
+                }
+            });
+            
+            // 去重计算（因为radio按钮会重复计算）
+            const uniqueRequiredFields = new Set();
+            requiredFields.forEach(field => {
+                if (field.type === 'radio') {
+                    uniqueRequiredFields.add(field.name);
+                } else {
+                    uniqueRequiredFields.add(field.name);
+                }
+            });
+            
+            let actualFilledFields = 0;
+            uniqueRequiredFields.forEach(fieldName => {
+                const field = form.querySelector(`[name="${fieldName}"]`);
+                if (field.type === 'radio') {
+                    const radioGroup = form.querySelectorAll(`[name="${fieldName}"]`);
+                    const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                    if (isChecked) actualFilledFields++;
+                } else if (field.value.trim() !== '') {
+                    actualFilledFields++;
+                }
+            });
+            
+            const progress = (actualFilledFields / uniqueRequiredFields.size) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // 为所有表单元素添加事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('surveyForm');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', updateProgress);
+                input.addEventListener('change', updateProgress);
+            });
+            
+            // 表单提交处理
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 收集表单数据
+                const formData = new FormData(form);
+                const data = {};
+                
+                // 处理普通字段
+                for (let [key, value] of formData.entries()) {
+                    if (data[key]) {
+                        // 如果已存在，转换为数组
+                        if (Array.isArray(data[key])) {
+                            data[key].push(value);
+                        } else {
+                            data[key] = [data[key], value];
+                        }
+                    } else {
+                        data[key] = value;
+                    }
+                }
+                
+                // 显示收集到的数据（实际项目中这里应该发送到服务器）
+                console.log('问卷数据:', data);
+                
+                // 显示成功消息
+                form.style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // 可以在这里添加发送数据到服务器的代码
+                // fetch('/api/survey', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify(data)
+                // });
+            });
+            
+            // 初始化进度条
+            updateProgress();
+        });
+
+        // 添加一些交互效果
+        document.querySelectorAll('.radio-item, .checkbox-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const input = this.querySelector('input');
+                if (input.type === 'radio') {
+                    input.checked = true;
+                } else if (input.type === 'checkbox') {
+                    input.checked = !input.checked;
+                }
+                updateProgress();
+            });
+        });
+    </script>
+</body>
+</html>
