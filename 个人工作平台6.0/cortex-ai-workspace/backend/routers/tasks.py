@@ -239,7 +239,7 @@ async def parse_tasks_with_ai(
         # 调用AI服务解析任务
         result = await ai_service.parse_tasks_advanced(
             request.text, 
-            model=request.model or "openai/gpt-5"
+            model=request.model or "gpt-5"
         )
         
         # 保存解析出的任务到数据库
@@ -256,7 +256,7 @@ async def parse_tasks_with_ai(
                 tags=json.dumps(task_data.get("tags", [])),
                 subtasks=json.dumps(task_data.get("subtasks", [])),
                 ai_generated=True,
-                ai_model=request.model or "openai/gpt-5",
+                ai_model=request.model or "gpt-5",
                 user_id=current_user.id
             )
             
@@ -287,7 +287,7 @@ async def parse_tasks_with_ai(
                 }
                 for task in created_tasks
             ],
-            "model": request.model or "openai/gpt-5",
+            "model": request.model or "gpt-5",
             "total_count": len(created_tasks)
         }
         

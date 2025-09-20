@@ -110,7 +110,7 @@ async def send_message(
         raise HTTPException(status_code=404, detail="对话不存在")
     
     user_content = message_data.get("content", "")
-    model = message_data.get("model", "openai/gpt-5")
+    model = message_data.get("model", "gpt-5")
     
     if not user_content.strip():
         raise HTTPException(status_code=400, detail="消息内容不能为空")
@@ -233,8 +233,8 @@ async def execute_quick_command(
     """执行快捷命令"""
     command = request.get("command")
     text = request.get("text", "")
-    model = request.get("model", "openai/gpt-5")
-    
+    model = request.get("model", "gpt-5")
+
     if not command:
         raise HTTPException(status_code=400, detail="命令不能为空")
     
@@ -277,7 +277,7 @@ async def global_chat(
 ):
     """全局AI聊天（不保存到数据库）"""
     message = request.get("message", "")
-    model = request.get("model", "openai/gpt-5")
+    model = request.get("model", "gpt-5")
     context = request.get("context", [])  # 可选的上下文消息
     
     if not message.strip():
@@ -317,17 +317,17 @@ async def get_available_models():
         models = await ai_service.get_available_models()
         return {
             "models": models,
-            "default": "openai/gpt-5"
+            "default": "gpt-5"
         }
     except Exception as e:
         # 返回默认模型列表
         return {
             "models": [
-                {"id": "openai/gpt-5", "name": "GPT-5", "provider": "OpenAI", "color": "bg-green-500"},
+                {"id": "gpt-5", "name": "GPT-5", "provider": "OpenAI", "color": "bg-green-500"},
                 {"id": "google/gemini-2.5-pro", "name": "Gemini 2.5 Pro", "provider": "Google", "color": "bg-blue-500"},
                 {"id": "anthropic/claude-4", "name": "Claude-4", "provider": "Anthropic", "color": "bg-purple-500"},
                 {"id": "deepseek/deepseek-chat-v3", "name": "DeepSeek V3", "provider": "DeepSeek", "color": "bg-orange-500"}
             ],
-            "default": "openai/gpt-5"
+            "default": "gpt-5"
         }
 

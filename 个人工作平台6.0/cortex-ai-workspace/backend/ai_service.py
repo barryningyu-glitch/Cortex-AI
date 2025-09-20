@@ -8,28 +8,24 @@ import asyncio
 from datetime import datetime, timedelta
 
 class AIModel(str, Enum):
-    GPT_5 = "openai/gpt-5"
-    GEMINI_2_5_FLASH = "google/gemini-2.5-flash"
-    GEMINI_2_5_PRO = "google/gemini-2.5-pro"
-    CLAUDE_4 = "anthropic/claude-4"
-    DEEPSEEK_V3 = "deepseek/deepseek-chat-v3"
-    DEEPSEEK_R1 = "deepseek/deepseek-r1"
+    GPT_5 = "gpt-5"
+    GPT_4O = "gpt-4o"
+    GPT_4O_MINI = "gpt-4o-mini"
+    GPT_4_TURBO = "gpt-4-turbo"
 
 class AIService:
     def __init__(self):
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY", "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")
-        self.openrouter_base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+        self.openai_api_key = os.getenv("OPENAI_API_KEY")
+        self.openai_base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
         self.default_model = os.getenv("DEFAULT_MODEL", AIModel.GPT_5)
         
     def get_available_models(self) -> List[Dict[str, str]]:
         """获取可用的AI模型列表"""
         return [
             {"id": AIModel.GPT_5, "name": "GPT-5", "provider": "OpenAI", "color": "bg-green-500"},
-            {"id": AIModel.GEMINI_2_5_FLASH, "name": "Gemini 2.5 Flash", "provider": "Google", "color": "bg-blue-500"},
-            {"id": AIModel.GEMINI_2_5_PRO, "name": "Gemini 2.5 Pro", "provider": "Google", "color": "bg-blue-600"},
-            {"id": AIModel.CLAUDE_4, "name": "Claude-4", "provider": "Anthropic", "color": "bg-purple-500"},
-            {"id": AIModel.DEEPSEEK_V3, "name": "DeepSeek V3", "provider": "DeepSeek", "color": "bg-orange-500"},
-            {"id": AIModel.DEEPSEEK_R1, "name": "DeepSeek R1", "provider": "DeepSeek", "color": "bg-red-500"},
+            {"id": AIModel.GPT_4O, "name": "GPT-4o", "provider": "OpenAI", "color": "bg-green-600"},
+            {"id": AIModel.GPT_4O_MINI, "name": "GPT-4o Mini", "provider": "OpenAI", "color": "bg-green-400"},
+            {"id": AIModel.GPT_4_TURBO, "name": "GPT-4 Turbo", "provider": "OpenAI", "color": "bg-green-700"},
         ]
     
     async def chat_completion(
@@ -46,10 +42,8 @@ class AIService:
             
         try:
             headers = {
-                "Authorization": f"Bearer {self.openrouter_api_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://cortex-ai-workspace.local",
-                "X-Title": "Cortex AI Workspace"
+                "Authorization": f"Bearer {self.openai_api_key}",
+                "Content-Type": "application/json"
             }
             
             payload = {
@@ -61,7 +55,7 @@ class AIService:
             }
             
             response = requests.post(
-                f"{self.openrouter_base_url}/chat/completions",
+                f"{self.openai_base_url}/chat/completions",
                 headers=headers,
                 json=payload,
                 timeout=30
@@ -70,7 +64,7 @@ class AIService:
             if response.status_code != 200:
                 raise HTTPException(
                     status_code=response.status_code,
-                    detail=f"OpenRouter API错误: {response.text}"
+                    detail=f"OpenAI API错误: {response.text}"
                 )
             
             result = response.json()

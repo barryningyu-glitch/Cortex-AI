@@ -63,7 +63,7 @@ async def parse_tasks_batch(
     """AI批量解析自然语言任务"""
     try:
         text = request.get("text", "")
-        model = request.get("model", "openai/gpt-5")
+        model = request.get("model", "gpt-5")
         
         if not text.strip():
             raise HTTPException(status_code=400, detail="输入文本不能为空")
@@ -148,7 +148,7 @@ async def enhance_text_endpoint(
     try:
         text = request.get("text", "")
         mode = request.get("mode", "improve")
-        model = request.get("model", "openai/gpt-5")
+        model = request.get("model", "gpt-5")
         
         if not text.strip():
             raise HTTPException(status_code=400, detail="输入文本不能为空")
@@ -184,7 +184,7 @@ async def ai_chat(
     """AI聊天端点"""
     try:
         messages = request.get("messages", [])
-        model = request.get("model", "openai/gpt-5")
+        model = request.get("model", "gpt-5")
         
         if not messages:
             raise HTTPException(status_code=400, detail="消息不能为空")
@@ -208,7 +208,7 @@ async def generate_tags(
     try:
         title = request.get("title", "")
         content = request.get("content", "")
-        model = request.get("model", "openai/gpt-5")
+        model = request.get("model", "gpt-5")
         
         if not (title or content):
             raise HTTPException(status_code=400, detail="标题或内容不能为空")
@@ -233,7 +233,7 @@ async def categorize_note_endpoint(
     try:
         title = request.get("title", "")
         content = request.get("content", "")
-        model = request.get("model", "openai/gpt-5")
+        model = request.get("model", "gpt-5")
         
         if not (title or content):
             raise HTTPException(status_code=400, detail="标题或内容不能为空")

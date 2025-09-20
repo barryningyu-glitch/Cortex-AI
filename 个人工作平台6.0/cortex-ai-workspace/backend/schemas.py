@@ -301,7 +301,7 @@ class AIParseTasksResponse(BaseModel):
 class UserSettingsBase(BaseModel):
     theme: str = Field(default="dark", pattern="^(light|dark)$")
     language: str = Field(default="zh", pattern="^(zh|en)$")
-    default_ai_model: str = Field(default="openai/gpt-5")
+    default_ai_model: str = Field(default="gpt-5")
     pomodoro_work_time: int = Field(default=25, ge=15, le=60)
     pomodoro_short_break: int = Field(default=5, ge=3, le=15)
     pomodoro_long_break: int = Field(default=15, ge=10, le=30)

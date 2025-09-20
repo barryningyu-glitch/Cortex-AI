@@ -177,7 +177,7 @@ class UserSettings(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     theme = Column(String(20), default="dark")
     language = Column(String(10), default="zh")
-    default_ai_model = Column(String(50), default="openai/gpt-5")
+    default_ai_model = Column(String(50), default="gpt-5")
     pomodoro_work_time = Column(Integer, default=25)
     pomodoro_short_break = Column(Integer, default=5)
     pomodoro_long_break = Column(Integer, default=15)
