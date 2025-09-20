@@ -1,0 +1,851 @@
+import React, { useState, useEffect } from 'react'
+import { 
+  Plus, 
+  Search, 
+  FolderPlus, 
+  ChevronRight, 
+  ChevronDown,
+  FileText,
+  Edit3,
+  Trash2,
+  Tag,
+  Brain,
+  Wand2,
+  Loader2,
+  Save,
+  X
+} from 'lucide-react'
+import { Button } from '@/components/ui/button.jsx'
+import { Input } from '@/components/ui/input.jsx'
+import { Textarea } from '@/components/ui/textarea.jsx'
+import { Badge } from '@/components/ui/badge.jsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog.jsx'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx'
+
+const NotesPageFinal = () => {
+  const [selectedCategory, setSelectedCategory] = useState('work')
+  const [folders, setFolders] = useState({})
+  const [notes, setNotes] = useState([])
+  const [selectedNote, setSelectedNote] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [expandedFolders, setExpandedFolders] = useState({})
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingNote, setEditingNote] = useState(null)
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [aiMode, setAiMode] = useState('improve')
+  const [aiModel, setAiModel] = useState('openai/gpt-5')
+  const [isAIProcessing, setIsAIProcessing] = useState(false)
+  const [availableModels, setAvailableModels] = useState([])
+  const [showNewFolderDialog, setShowNewFolderDialog] = useState(false)
+  const [newFolderName, setNewFolderName] = useState('')
+
+  // 分类配置
+  const categories = [
+    { id: 'work', name: '工作', icon: '💼', color: 'bg-blue-500' },
+    { id: 'study', name: '学习', icon: '📚', color: 'bg-green-500' },
+    { id: 'life', name: '生活', icon: '🏠', color: 'bg-purple-500' }
+  ]
+
+  // AI增强模式
+  const aiModes = [
+    { id: 'improve', name: '文本改进', description: '优化表达和语法' },
+    { id: 'summarize', name: '内容摘要', description: '提取关键信息' },
+    { id: 'expand', name: '内容扩展', description: '丰富细节和内容' },
+    { id: 'translate', name: '智能翻译', description: '翻译为英文' },
+    { id: 'restructure', name: '结构优化', description: '重新组织结构' }
+  ]
+
+  // 初始化数据
+  useEffect(() => {
+    loadAvailableModels()
+    loadNotesData()
+  }, [])
+
+  // 加载可用AI模型
+  const loadAvailableModels = async () => {
+    try {
+      const response = await fetch('/api/ai/models')
+      const data = await response.json()
+      setAvailableModels(data.models || [])
+      if (data.default) {
+        setAiModel(data.default)
+      }
+    } catch (error) {
+      console.error('加载AI模型失败:', error)
+      // 使用默认模型列表
+      setAvailableModels([
+        { id: 'openai/gpt-5', name: 'GPT-5', provider: 'OpenAI', color: 'bg-green-500' },
+        { id: 'google/gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'Google', color: 'bg-blue-500' },
+        { id: 'anthropic/claude-4', name: 'Claude-4', provider: 'Anthropic', color: 'bg-purple-500' },
+        { id: 'deepseek/deepseek-chat-v3', name: 'DeepSeek V3', provider: 'DeepSeek', color: 'bg-orange-500' }
+      ])
+    }
+  }
+
+  // 加载笔记数据
+  const loadNotesData = () => {
+    // 模拟数据 - 实际应用中从API获取
+    const mockFolders = {
+      work: [
+        { id: 'w1', name: '项目文档', notes: ['n1', 'n2'] },
+        { id: 'w2', name: '会议记录', notes: ['n3'] },
+        { id: 'w3', name: '技术笔记', notes: ['n4'] }
+      ],
+      study: [
+        { id: 's1', name: 'React学习', notes: ['n5'] },
+        { id: 's2', name: '算法练习', notes: ['n6'] }
+      ],
+      life: [
+        { id: 'l1', name: '健康管理', notes: ['n7'] },
+        { id: 'l2', name: '旅行计划', notes: ['n8'] }
+      ]
+    }
+
+    const mockNotes = [
+      {
+        id: 'n1',
+        title: 'AI工作台项目规划',
+        content: '项目目标：开发一个集成AI功能的个人工作台...',
+        category: 'work',
+        folder: 'w1',
+        tags: ['项目', 'AI', '规划'],
+        created_at: '2024-01-15T10:00:00Z',
+        updated_at: '2024-01-15T10:00:00Z'
+      },
+      {
+        id: 'n2',
+        title: '技术架构设计',
+        content: '前端：React + Vite\n后端：FastAPI + SQLite\nAI集成：OpenRouter API...',
+        category: 'work',
+        folder: 'w1',
+        tags: ['架构', '技术'],
+        created_at: '2024-01-14T15:30:00Z',
+        updated_at: '2024-01-14T15:30:00Z'
+      },
+      {
+        id: 'n3',
+        title: '项目进度会议',
+        content: '会议时间：2024-01-15 14:00\n参与人员：开发团队\n讨论内容：...',
+        category: 'work',
+        folder: 'w2',
+        tags: ['会议', '进度'],
+        created_at: '2024-01-15T14:00:00Z',
+        updated_at: '2024-01-15T14:00:00Z'
+      },
+      {
+        id: 'n4',
+        title: 'FastAPI最佳实践',
+        content: 'FastAPI是一个现代、快速的Python Web框架...',
+        category: 'work',
+        folder: 'w3',
+        tags: ['FastAPI', 'Python', '后端'],
+        created_at: '2024-01-13T09:00:00Z',
+        updated_at: '2024-01-13T09:00:00Z'
+      },
+      {
+        id: 'n5',
+        title: 'React Hooks深入理解',
+        content: 'useState、useEffect、useContext等Hooks的使用...',
+        category: 'study',
+        folder: 's1',
+        tags: ['React', 'Hooks', '前端'],
+        created_at: '2024-01-12T20:00:00Z',
+        updated_at: '2024-01-12T20:00:00Z'
+      },
+      {
+        id: 'n6',
+        title: '二分查找算法',
+        content: '二分查找是一种高效的搜索算法...',
+        category: 'study',
+        folder: 's2',
+        tags: ['算法', '二分查找'],
+        created_at: '2024-01-11T16:00:00Z',
+        updated_at: '2024-01-11T16:00:00Z'
+      },
+      {
+        id: 'n7',
+        title: '健身计划',
+        content: '每周运动安排：\n周一：跑步30分钟\n周三：力量训练...',
+        category: 'life',
+        folder: 'l1',
+        tags: ['健身', '计划'],
+        created_at: '2024-01-10T18:00:00Z',
+        updated_at: '2024-01-10T18:00:00Z'
+      },
+      {
+        id: 'n8',
+        title: '春节旅行计划',
+        content: '目的地：云南\n时间：2024年2月...',
+        category: 'life',
+        folder: 'l2',
+        tags: ['旅行', '春节'],
+        created_at: '2024-01-09T21:00:00Z',
+        updated_at: '2024-01-09T21:00:00Z'
+      }
+    ]
+
+    setFolders(mockFolders)
+    setNotes(mockNotes)
+    
+    // 默认展开第一个文件夹
+    if (mockFolders[selectedCategory] && mockFolders[selectedCategory].length > 0) {
+      setExpandedFolders({ [mockFolders[selectedCategory][0].id]: true })
+    }
+  }
+
+  // 获取当前分类的笔记
+  const getCurrentCategoryNotes = () => {
+    return notes.filter(note => note.category === selectedCategory)
+  }
+
+  // 搜索过滤笔记
+  const getFilteredNotes = () => {
+    const categoryNotes = getCurrentCategoryNotes()
+    if (!searchTerm) return categoryNotes
+    
+    return categoryNotes.filter(note =>
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  }
+
+  // 切换文件夹展开状态
+  const toggleFolder = (folderId) => {
+    setExpandedFolders(prev => ({
+      ...prev,
+      [folderId]: !prev[folderId]
+    }))
+  }
+
+  // 创建新笔记
+  const createNewNote = () => {
+    const newNote = {
+      id: `n${Date.now()}`,
+      title: '新笔记',
+      content: '',
+      category: selectedCategory,
+      folder: folders[selectedCategory]?.[0]?.id || null,
+      tags: [],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+    
+    setNotes([newNote, ...notes])
+    setSelectedNote(newNote)
+    setIsEditing(true)
+    setEditingNote({ ...newNote })
+  }
+
+  // 创建新文件夹
+  const createNewFolder = async () => {
+    if (!newFolderName.trim()) {
+      alert('请输入文件夹名称')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        alert('请先登录系统')
+        return
+      }
+
+      console.log('正在创建文件夹:', newFolderName.trim(), '分类:', selectedCategory)
+      console.log('使用的token:', token.substring(0, 10) + '...')
+
+      const requestData = {
+        name: newFolderName.trim(),
+        category: selectedCategory
+      }
+
+      console.log('请求数据:', requestData)
+
+      const response = await fetch('/api/notes/folders/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(requestData)
+      })
+
+      console.log('服务器响应状态:', response.status)
+      console.log('服务器响应头:', response.headers)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('服务器返回原始错误文本:', errorText)
+
+        let errorData
+        try {
+          errorData = JSON.parse(errorText)
+        } catch (e) {
+          errorData = { detail: errorText || '未知错误' }
+        }
+
+        console.error('服务器返回错误:', errorData)
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const folderData = await response.json()
+      console.log('文件夹创建成功:', folderData)
+
+      // 更新本地状态
+      setFolders(prev => ({
+        ...prev,
+        [selectedCategory]: [...(prev[selectedCategory] || []), {
+          id: folderData.id,
+          name: folderData.name,
+          notes: []
+        }]
+      }))
+
+      // 清空输入并关闭对话框
+      setNewFolderName('')
+      setShowNewFolderDialog(false)
+      alert('文件夹创建成功！')
+
+    } catch (error) {
+      console.error('创建文件夹失败:', error)
+      alert(`创建文件夹失败: ${error.message}`)
+    }
+  }
+
+  // 保存笔记
+  const saveNote = async () => {
+    if (!editingNote) return
+    
+    try {
+      // 这里应该调用API保存笔记
+      // const response = await fetch(`/api/notes/${editingNote.id}`, {
+      //   method: 'PUT',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(editingNote)
+      // })
+      
+      // 更新本地状态
+      setNotes(notes.map(note => 
+        note.id === editingNote.id 
+          ? { ...editingNote, updated_at: new Date().toISOString() }
+          : note
+      ))
+      
+      setSelectedNote(editingNote)
+      setIsEditing(false)
+      setEditingNote(null)
+    } catch (error) {
+      console.error('保存笔记失败:', error)
+      alert('保存失败，请重试')
+    }
+  }
+
+  // 删除笔记
+  const deleteNote = async (noteId) => {
+    if (!confirm('确定要删除这篇笔记吗？')) return
+    
+    try {
+      // 这里应该调用API删除笔记
+      // await fetch(`/api/notes/${noteId}`, { method: 'DELETE' })
+      
+      setNotes(notes.filter(note => note.id !== noteId))
+      if (selectedNote?.id === noteId) {
+        setSelectedNote(null)
+      }
+    } catch (error) {
+      console.error('删除笔记失败:', error)
+      alert('删除失败，请重试')
+    }
+  }
+
+  // AI增强文本
+  const enhanceWithAI = async () => {
+    if (!editingNote?.content) {
+      alert('请先输入一些内容')
+      return
+    }
+    
+    setIsAIProcessing(true)
+    
+    try {
+      const response = await fetch('/api/ai/enhance-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: editingNote.content,
+          mode: aiMode,
+          model: aiModel
+        })
+      })
+      
+      if (!response.ok) {
+        throw new Error('AI增强失败')
+      }
+      
+      const data = await response.json()
+      
+      setEditingNote({
+        ...editingNote,
+        content: data.enhanced_text
+      })
+      
+      setShowAIModal(false)
+    } catch (error) {
+      console.error('AI增强失败:', error)
+      alert('AI增强失败，请重试')
+    } finally {
+      setIsAIProcessing(false)
+    }
+  }
+
+  // 生成智能标签
+  const generateTags = async () => {
+    if (!editingNote?.title && !editingNote?.content) return
+    
+    try {
+      const response = await fetch('/api/ai/generate-tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editingNote.title,
+          content: editingNote.content,
+          model: aiModel
+        })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setEditingNote({
+          ...editingNote,
+          tags: [...new Set([...editingNote.tags, ...data.tags])]
+        })
+      }
+    } catch (error) {
+      console.error('生成标签失败:', error)
+    }
+  }
+
+  const currentCategory = categories.find(cat => cat.id === selectedCategory)
+  const filteredNotes = getFilteredNotes()
+
+  return (
+    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
+      {/* 移动端顶部栏 */}
+      <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-background">
+        <h1 className="text-lg font-semibold">笔记</h1>
+        <Button
+          onClick={createNewNote}
+          size="sm"
+          className="eva-button"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          新建
+        </Button>
+      </div>
+
+      {/* 左侧边栏 */}
+      <div className="w-full lg:w-80 eva-panel m-2 lg:m-4 lg:mr-2 flex flex-col max-h-[40vh] lg:max-h-none overflow-hidden">
+        {/* 分类标签 */}
+        <div className="p-3 lg:p-4 border-b border-border">
+          <div className="flex flex-wrap gap-1 lg:gap-2">
+            {categories.map(category => (
+              <Badge
+                key={category.id}
+                variant={selectedCategory === category.id ? "default" : "secondary"}
+                className={`cursor-pointer text-xs lg:text-sm ${selectedCategory === category.id ? category.color : ''}`}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                {category.name}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        {/* 搜索和新建 */}
+        <div className="p-3 lg:p-4 border-b border-border">
+          <div className="flex gap-2 mb-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="搜索笔记..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="eva-input pl-10 h-9 lg:h-10"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={createNewNote}
+              className="eva-button flex-1 h-9 lg:h-10 text-sm hidden lg:flex"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              新建笔记
+            </Button>
+            <Button
+              onClick={createNewNote}
+              className="eva-button flex-1 h-9 text-sm lg:hidden"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              新建
+            </Button>
+            <Button
+              variant="outline"
+              className="eva-button-outline h-9 lg:h-10"
+              onClick={() => setShowNewFolderDialog(true)}
+            >
+              <FolderPlus className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* 文件夹和笔记列表 */}
+        <div className="flex-1 overflow-y-auto">
+          {folders[selectedCategory]?.map(folder => (
+            <div key={folder.id} className="border-b border-border">
+              <button
+                onClick={() => toggleFolder(folder.id)}
+                className="w-full flex items-center gap-2 p-2 lg:p-3 hover:bg-muted text-left"
+              >
+                {expandedFolders[folder.id] ? (
+                  <ChevronDown className="w-4 h-4" />
+                ) : (
+                  <ChevronRight className="w-4 h-4" />
+                )}
+                <span className="font-medium text-sm lg:text-base truncate">{folder.name}</span>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  {folder.notes.length}
+                </span>
+              </button>
+              
+              {expandedFolders[folder.id] && (
+                <div className="pb-2">
+                  {filteredNotes
+                    .filter(note => note.folder === folder.id)
+                    .map(note => (
+                      <button
+                        key={note.id}
+                        onClick={() => setSelectedNote(note)}
+                        className={`w-full text-left p-2 lg:p-3 pl-6 lg:pl-8 hover:bg-muted border-l-2 transition-colors ${
+                          selectedNote?.id === note.id
+                            ? 'border-l-primary bg-muted'
+                            : 'border-l-transparent'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <FileText className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm lg:text-base truncate">
+                              {note.title}
+                            </div>
+                            <div className="text-xs lg:text-sm text-muted-foreground mt-1 line-clamp-2">
+                              {note.content}
+                            </div>
+                            {note.tags.length > 0 && (
+                              <div className="flex gap-1 mt-2">
+                                {note.tags.slice(0, 2).map(tag => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                                {note.tags.length > 2 && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    +{note.tags.length - 2}
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 右侧内容区 */}
+      <div className="flex-1 eva-panel m-2 lg:m-4 lg:ml-2 flex flex-col">
+        {selectedNote ? (
+          <>
+            {/* 笔记头部 */}
+            <div className="p-3 lg:p-4 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-1">
+                  <div className={`w-3 h-3 rounded-full ${currentCategory?.color} flex-shrink-0`}></div>
+                  <h2 className="text-lg lg:text-xl font-bold truncate">
+                    {isEditing ? (
+                      <Input
+                        value={editingNote?.title || ''}
+                        onChange={(e) => setEditingNote({
+                          ...editingNote,
+                          title: e.target.value
+                        })}
+                        className="eva-input text-lg lg:text-xl font-bold"
+                      />
+                    ) : (
+                      selectedNote.title
+                    )}
+                  </h2>
+                </div>
+                
+                <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
+                  {isEditing ? (
+                    <>
+                      <Button
+                        onClick={() => setShowAIModal(true)}
+                        variant="outline"
+                        size="sm"
+                        className="text-primary hidden lg:flex"
+                      >
+                        <Brain className="w-4 h-4 mr-2" />
+                        AI增强
+                      </Button>
+                      <Button
+                        onClick={() => setShowAIModal(true)}
+                        variant="outline"
+                        size="sm"
+                        className="text-primary lg:hidden"
+                      >
+                        <Brain className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={generateTags}
+                        variant="outline"
+                        size="sm"
+                        className="hidden lg:flex"
+                      >
+                        <Tag className="w-4 h-4 mr-2" />
+                        生成标签
+                      </Button>
+                      <Button
+                        onClick={generateTags}
+                        variant="outline"
+                        size="sm"
+                        className="lg:hidden"
+                      >
+                        <Tag className="w-4 h-4" />
+                      </Button>
+                      <Button onClick={saveNote} className="eva-button" size="sm">
+                        <Save className="w-4 h-4 mr-1 lg:mr-2" />
+                        <span className="hidden lg:inline">保存</span>
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setIsEditing(false)
+                          setEditingNote(null)
+                        }}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => {
+                          setIsEditing(true)
+                          setEditingNote({ ...selectedNote })
+                        }}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Edit3 className="w-4 h-4 mr-1 lg:mr-2" />
+                        <span className="hidden lg:inline">编辑</span>
+                      </Button>
+                      <Button
+                        onClick={() => deleteNote(selectedNote.id)}
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+              
+              {/* 标签 */}
+              <div className="flex items-center gap-1 lg:gap-2 mt-3 flex-wrap">
+                {(isEditing ? editingNote?.tags : selectedNote.tags)?.map(tag => (
+                  <Badge key={tag} variant="secondary" className="text-xs lg:text-sm">
+                    {tag}
+                    {isEditing && (
+                      <button
+                        onClick={() => setEditingNote({
+                          ...editingNote,
+                          tags: editingNote.tags.filter(t => t !== tag)
+                        })}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* 笔记内容 */}
+            <div className="flex-1 p-3 lg:p-4 overflow-hidden">
+              {isEditing ? (
+                <Textarea
+                  value={editingNote?.content || ''}
+                  onChange={(e) => setEditingNote({
+                    ...editingNote,
+                    content: e.target.value
+                  })}
+                  placeholder="开始写作..."
+                  className="eva-input w-full h-full resize-none text-sm lg:text-base"
+                />
+              ) : (
+                <div className="prose prose-sm lg:prose-base max-w-none overflow-y-auto">
+                  {selectedNote.content.split('\n').map((line, index) => (
+                    <p key={index} className="mb-2 text-sm lg:text-base">
+                      {line || '\u00A0'}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
+            <div className="text-center">
+              <FileText className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-4 opacity-50" />
+              <p className="text-base lg:text-lg">选择一篇笔记开始阅读</p>
+              <p className="text-sm lg:text-base mt-2">或者创建一篇新笔记</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* AI增强弹窗 */}
+      {showAIModal && (
+        <Dialog open={showAIModal} onOpenChange={setShowAIModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-primary" />
+                AI文本增强
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {/* AI模型选择 */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">AI模型</label>
+                <Select value={aiModel} onValueChange={setAiModel}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableModels.map(model => (
+                      <SelectItem key={model.id} value={model.id}>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${model.color}`}></div>
+                          <span>{model.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 增强模式选择 */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">增强模式</label>
+                <div className="grid grid-cols-1 gap-2">
+                  {aiModes.map(mode => (
+                    <button
+                      key={mode.id}
+                      onClick={() => setAiMode(mode.id)}
+                      className={`p-3 text-left rounded-lg border transition-colors ${
+                        aiMode === mode.id
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border hover:bg-muted'
+                      }`}
+                    >
+                      <div className="font-medium text-sm">{mode.name}</div>
+                      <div className="text-xs text-muted-foreground">{mode.description}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 操作按钮 */}
+              <div className="flex justify-between pt-4">
+                <Button variant="outline" onClick={() => setShowAIModal(false)}>
+                  取消
+                </Button>
+                <Button 
+                  onClick={enhanceWithAI} 
+                  disabled={isAIProcessing}
+                  className="eva-button"
+                >
+                  {isAIProcessing ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      处理中...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="w-4 h-4 mr-2" />
+                      开始增强
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* 新建文件夹对话框 */}
+      {showNewFolderDialog && (
+        <Dialog open={showNewFolderDialog} onOpenChange={setShowNewFolderDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>创建新文件夹</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">文件夹名称</label>
+                <Input
+                  placeholder="请输入文件夹名称"
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && newFolderName.trim()) {
+                      createNewFolder()
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex justify-between pt-4">
+                <Button variant="outline" onClick={() => setShowNewFolderDialog(false)}>
+                  取消
+                </Button>
+                <Button
+                  onClick={createNewFolder}
+                  disabled={!newFolderName.trim()}
+                  className="eva-button"
+                >
+                  创建
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  )
+}
+
+export default NotesPageFinal
+

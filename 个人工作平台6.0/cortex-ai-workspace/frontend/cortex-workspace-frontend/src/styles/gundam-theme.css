@@ -1,0 +1,414 @@
+/* 高达经典白蓝红配色主题 */
+
+/* 浅色高达主题 CSS 变量 */
+[data-theme="gundam-light"] {
+  /* 基础配色 */
+  --gundam-white: #FFFFFF;
+  --gundam-mechanical-white: #F8F9FA;
+  --gundam-blue: #0066CC;
+  --gundam-dark-blue: #003D7A;
+  --gundam-red: #CC0000;
+  --gundam-dark-red: #990000;
+  --gundam-silver: #E8E9EA;
+  --gundam-dark-gray: #343A40;
+  --gundam-medium-gray: #6C757D;
+  --gundam-gold: #FFD700;
+
+  /* 主题变量映射 */
+  --bg-primary: var(--gundam-white);
+  --bg-secondary: var(--gundam-mechanical-white);
+  --bg-tertiary: var(--gundam-silver);
+  --text-primary: var(--gundam-dark-gray);
+  --text-secondary: var(--gundam-medium-gray);
+  --text-muted: #ADB5BD;
+  --border-color: var(--gundam-silver);
+  --accent-color: var(--gundam-blue);
+  --accent-hover: var(--gundam-dark-blue);
+  --success-color: #28A745;
+  --warning-color: #FFC107;
+  --danger-color: var(--gundam-red);
+  --info-color: var(--gundam-blue);
+}
+
+/* 高达浅色主题基础样式 */
+.gundam-light-theme {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  color: var(--gundam-dark-gray);
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+/* 应用容器 */
+.gundam-light-theme .app-container {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, #E3F2FD 50%, var(--gundam-mechanical-white) 100%);
+  min-height: 100vh;
+}
+
+/* 侧边栏样式 */
+.gundam-light-theme .sidebar {
+  background: linear-gradient(180deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  border-right: 3px solid var(--gundam-blue);
+  box-shadow: 4px 0 12px rgba(0, 102, 204, 0.1);
+  position: relative;
+}
+
+.gundam-light-theme .sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--gundam-gold) 0%, transparent 50%, var(--gundam-gold) 100%);
+}
+
+/* 导航按钮 */
+.gundam-light-theme .sidebar-nav button {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  color: var(--gundam-dark-blue);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  margin: 4px 8px;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.1);
+}
+
+.gundam-light-theme .sidebar-nav button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.gundam-light-theme .sidebar-nav button:hover {
+  background: linear-gradient(135deg, #E3F2FD 0%, var(--gundam-blue) 100%);
+  color: var(--gundam-white);
+  border-color: var(--gundam-dark-blue);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.2);
+  transform: translateX(4px);
+}
+
+.gundam-light-theme .sidebar-nav button:hover::before {
+  left: 100%;
+}
+
+.gundam-light-theme .sidebar-nav button.active {
+  background: linear-gradient(135deg, var(--gundam-blue) 0%, var(--gundam-dark-blue) 100%);
+  color: var(--gundam-white);
+  border-color: var(--gundam-gold);
+  border-left: 4px solid var(--gundam-gold);
+  box-shadow: 0 6px 12px rgba(0, 102, 204, 0.3);
+}
+
+/* 主内容区域 */
+.gundam-light-theme .main-content {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  position: relative;
+}
+
+/* 页面头部 */
+.gundam-light-theme .page-header {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, #E3F2FD 50%, var(--gundam-blue) 100%);
+  border-bottom: 3px solid var(--gundam-dark-blue);
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.15);
+  position: relative;
+}
+
+.gundam-light-theme .page-header::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gundam-gold) 0%, transparent 50%, var(--gundam-gold) 100%);
+}
+
+/* 仪表板卡片 */
+.gundam-light-theme .dashboard-grid .dashboard-card {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  border: 2px solid var(--gundam-silver);
+  border-left: 4px solid var(--gundam-blue);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.gundam-light-theme .dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--gundam-gold) 0%, transparent 100%);
+  clip-path: polygon(100% 0%, 0% 0%, 100% 100%);
+}
+
+.gundam-light-theme .dashboard-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 102, 204, 0.2);
+  border-color: var(--gundam-blue);
+  transform: translateY(-4px);
+}
+
+.gundam-light-theme .dashboard-card:hover::before {
+  background: linear-gradient(135deg, var(--gundam-red) 0%, var(--gundam-gold) 100%);
+}
+
+/* 按钮样式 */
+.gundam-light-theme .btn-primary {
+  background: linear-gradient(135deg, var(--gundam-blue) 0%, var(--gundam-dark-blue) 100%);
+  color: var(--gundam-white);
+  border: 2px solid var(--gundam-dark-blue);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.gundam-light-theme .btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+  transition: all 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+
+.gundam-light-theme .btn-primary:hover {
+  background: linear-gradient(135deg, var(--gundam-dark-blue) 0%, var(--gundam-blue) 100%);
+  box-shadow: 0 6px 12px rgba(0, 102, 204, 0.3);
+  transform: translateY(-2px);
+}
+
+.gundam-light-theme .btn-primary:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.gundam-light-theme .btn-secondary {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  color: var(--gundam-blue);
+  border: 2px solid var(--gundam-blue);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.1);
+  transition: all 0.3s ease;
+}
+
+.gundam-light-theme .btn-secondary:hover {
+  background: linear-gradient(135deg, #E3F2FD 0%, var(--gundam-blue) 100%);
+  color: var(--gundam-white);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.2);
+}
+
+.gundam-light-theme .btn-danger {
+  background: linear-gradient(135deg, var(--gundam-red) 0%, var(--gundam-dark-red) 100%);
+  color: var(--gundam-white);
+  border: 2px solid var(--gundam-dark-red);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(204, 0, 0, 0.2);
+}
+
+.gundam-light-theme .btn-danger:hover {
+  background: linear-gradient(135deg, var(--gundam-dark-red) 0%, #660000 100%);
+  box-shadow: 0 6px 12px rgba(204, 0, 0, 0.3);
+}
+
+/* 输入框样式 */
+.gundam-light-theme .form-group input,
+.gundam-light-theme .form-group textarea {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  border: 2px solid var(--gundam-silver);
+  border-radius: 8px;
+  color: var(--gundam-dark-gray);
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+}
+
+.gundam-light-theme .form-group input:focus,
+.gundam-light-theme .form-group textarea:focus {
+  border-color: var(--gundam-blue);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  outline: none;
+}
+
+/* 状态面板 */
+.gundam-light-theme .status-panel {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  border: 2px solid var(--gundam-silver);
+  border-left: 4px solid var(--gundam-blue);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.1);
+}
+
+/* 快速操作区域 */
+.gundam-light-theme .quick-actions {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  border: 2px solid var(--gundam-silver);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.1);
+}
+
+/* 主题切换按钮 */
+.gundam-light-theme .theme-toggle {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, #E3F2FD 100%);
+  border: 2px solid var(--gundam-blue);
+  border-radius: 8px;
+  color: var(--gundam-blue);
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.gundam-light-theme .theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 102, 204, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.gundam-light-theme .theme-toggle:hover {
+  background: linear-gradient(135deg, var(--gundam-blue) 0%, var(--gundam-dark-blue) 100%);
+  color: var(--gundam-white);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+}
+
+.gundam-light-theme .theme-toggle:hover::before {
+  left: 100%;
+}
+
+/* 用户信息区域 */
+.gundam-light-theme .user-info {
+  background: linear-gradient(135deg, var(--gundam-mechanical-white) 0%, var(--gundam-silver) 100%);
+  border: 2px solid var(--gundam-blue);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
+}
+
+/* 登录卡片 */
+.gundam-light-theme .login-card {
+  background: linear-gradient(135deg, var(--gundam-white) 0%, var(--gundam-mechanical-white) 100%);
+  border: 3px solid var(--gundam-blue);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 102, 204, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.gundam-light-theme .login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gundam-blue) 0%, var(--gundam-gold) 50%, var(--gundam-red) 100%);
+}
+
+/* 状态指示器 */
+.gundam-light-theme .status-dot.online {
+  background: radial-gradient(circle, #28A745 0%, #1E7E34 100%);
+  box-shadow: 0 0 8px #28A745;
+}
+
+.gundam-light-theme .status-dot.warning {
+  background: radial-gradient(circle, #FFC107 0%, #E0A800 100%);
+  box-shadow: 0 0 8px #FFC107;
+}
+
+.gundam-light-theme .status-dot.error {
+  background: radial-gradient(circle, var(--gundam-red) 0%, var(--gundam-dark-red) 100%);
+  box-shadow: 0 0 8px var(--gundam-red);
+}
+
+/* 机械装饰元素 */
+.gundam-light-theme .mechanical-corner {
+  position: relative;
+}
+
+.gundam-light-theme .mechanical-corner::before,
+.gundam-light-theme .mechanical-corner::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gundam-gold);
+}
+
+.gundam-light-theme .mechanical-corner::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.gundam-light-theme .mechanical-corner::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+/* 进度条 */
+.gundam-light-theme .progress-bar {
+  background: linear-gradient(90deg, var(--gundam-blue) 0%, var(--gundam-red) 100%);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.gundam-light-theme .progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: gundam-scan 2s infinite;
+}
+
+@keyframes gundam-scan {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .gundam-light-theme .sidebar-nav button {
+    margin: 2px 4px;
+    padding: 8px 12px;
+  }
+  
+  .gundam-light-theme .dashboard-card {
+    border-left-width: 2px;
+  }
+  
+  .gundam-light-theme .btn-primary,
+  .gundam-light-theme .btn-secondary,
+  .gundam-light-theme .btn-danger {
+    padding: 8px 16px;
+  }
+}
+
