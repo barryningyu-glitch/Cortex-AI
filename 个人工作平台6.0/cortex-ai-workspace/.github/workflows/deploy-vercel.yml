@@ -1,0 +1,44 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'frontend/cortex-workspace-frontend/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'frontend/cortex-workspace-frontend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/cortex-workspace-frontend/package-lock.json
+
+    - name: Install dependencies
+      working-directory: frontend/cortex-workspace-frontend
+      run: npm ci
+
+    - name: Build frontend
+      working-directory: frontend/cortex-workspace-frontend
+      run: npm run build
+
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        working-directory: frontend/cortex-workspace-frontend
+        vercel-args: '--prod'
