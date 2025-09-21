@@ -1,37 +1,22 @@
 {
-  "buildCommand": null,
-  "outputDirectory": "dist",
-  "installCommand": null,
-  "framework": null,
-  "rewrites": [
+  "version": 2,
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://cortex-ai-black.vercel.app/api/$1"
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/(.*)",
-      "destination": "/$1"
-    }
-  ],
-  "headers": [
+      "src": "/health",
+      "dest": "/api/index.py"
+    },
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        }
-      ]
+      "src": "/(.*)",
+      "dest": "/api/index.py"
     }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
