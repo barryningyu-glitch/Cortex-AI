@@ -1,22 +1,23 @@
 {
   "version": 2,
-  "functions": {
-    "api/vercel_handler.py": {
-      "runtime": "python3"
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/vercel_handler.py"
+      "dest": "api/index.py"
     },
     {
       "src": "/health",
-      "dest": "/api/vercel_handler.py"
+      "dest": "api/index.py"
     },
     {
       "src": "/(.*)",
-      "dest": "/api/vercel_handler.py"
+      "dest": "api/index.py"
     }
   ]
 }
